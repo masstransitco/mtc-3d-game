@@ -109,16 +109,16 @@ function PedalSlider({ type, position, onPositionChange }: PedalSliderProps) {
   const percentage = Math.round(position * 100)
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-1">
       {/* Percentage indicator */}
-      <span className={`text-xs font-medium tabular-nums transition-opacity duration-150 ${position > 0 ? 'text-white' : 'text-white/30'}`}>
+      <span className={`text-[10px] font-medium tabular-nums transition-opacity duration-150 ${position > 0 ? 'text-white' : 'text-white/30'}`}>
         {percentage}%
       </span>
 
-      {/* Vertical slider track */}
+      {/* Vertical slider track - more compact */}
       <div
         ref={sliderRef}
-        className="relative w-14 h-32 rounded-full bg-white/5 border border-white/10 cursor-pointer touch-none overflow-hidden"
+        className="relative w-10 h-24 rounded-full bg-white/5 border border-white/10 cursor-pointer touch-none overflow-hidden"
         onMouseDown={onMouseDown}
       >
         {/* Fill bar - grows from bottom */}
@@ -129,22 +129,13 @@ function PedalSlider({ type, position, onPositionChange }: PedalSliderProps) {
 
         {/* Thumb indicator line */}
         <div
-          className={`absolute left-1 right-1 h-1 rounded-full bg-white transition-all duration-75 ${position > 0 ? `shadow-lg ${glowColor}` : ''}`}
-          style={{ bottom: `calc(${position * 100}% - 2px)`, opacity: position > 0 ? 1 : 0.3 }}
+          className={`absolute left-1 right-1 h-0.5 rounded-full bg-white transition-all duration-75 ${position > 0 ? `shadow-lg ${glowColor}` : ''}`}
+          style={{ bottom: `calc(${position * 100}% - 1px)`, opacity: position > 0 ? 1 : 0.3 }}
         />
-
-        {/* Subtle tick marks */}
-        <div className="absolute inset-0 flex flex-col justify-between py-3 pointer-events-none">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="w-full flex justify-center">
-              <div className="w-4 h-px bg-white/10" />
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Label */}
-      <span className={`text-[10px] font-medium tracking-widest ${isThrottle ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
+      <span className={`text-[9px] font-medium tracking-wider ${isThrottle ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
         {label}
       </span>
     </div>
@@ -238,7 +229,7 @@ export function PedalControls() {
   }, [])
 
   return (
-    <div className="flex gap-4 bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/5">
+    <div className="flex gap-2 bg-black/40 backdrop-blur-sm rounded-xl p-2 border border-white/5">
       <PedalSlider
         type="throttle"
         position={localThrottle}

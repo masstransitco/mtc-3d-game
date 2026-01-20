@@ -19,29 +19,40 @@ import { usePerformanceTier } from "@/lib/game/use-performance-tier"
 function GameContent() {
   const { gameState, performanceTier } = useGame()
 
+  // Detect mobile device
+  const isMobile = useMemo(() => {
+    if (typeof window === "undefined") return false
+    return /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || 'ontouchstart' in window
+  }, [])
+
   // Mobile-optimized DPR starting point
   const initialDpr = useMemo(() => {
     if (typeof window === "undefined") return 1
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    if (isMobile) return Math.min(window.devicePixelRatio, 1.5)
+    // More aggressive DPR reduction on mobile for performance
+    if (isMobile) return Math.min(window.devicePixelRatio, 1.25)
     return Math.min(window.devicePixelRatio, 2)
-  }, [])
+  }, [isMobile])
 
   const [dpr, setDpr] = useState(initialDpr)
 
-  // GL config optimized for mobile
+  // GL config optimized for mobile/iOS
   const glConfig = useMemo(
     () => ({
-      antialias: performanceTier === "high",
+      antialias: !isMobile && performanceTier === "high",
       powerPreference: "high-performance" as const,
       stencil: false,
       depth: true,
       alpha: false,
-      // Preserve drawing buffer for screenshots but not on mobile
-      preserveDrawingBuffer: performanceTier === "high",
+      // Disable preserveDrawingBuffer on mobile for better performance
+      preserveDrawingBuffer: !isMobile && performanceTier === "high",
+      // WebGL 2 for better performance where available
+      failIfMajorPerformanceCaveat: false,
     }),
-    [performanceTier]
+    [performanceTier, isMobile]
   )
+
+  // Environment intensity based on device
+  const envIntensity = isMobile ? 0.3 : 0.5
 
   return (
     <>
@@ -50,7 +61,13 @@ function GameContent() {
         dpr={dpr}
         camera={{ position: [0, 5, 15], fov: 60, near: 0.5, far: 150 }}
         gl={glConfig}
-        style={{ background: "#0a0a0a" }}
+        style={{
+          background: "#0a0a0a",
+          width: "100%",
+          height: "100%",
+          display: "block",
+          touchAction: "none",
+        }}
         frameloop="always"
         flat={performanceTier === "low"}
       >
@@ -63,7 +80,7 @@ function GameContent() {
           <AdaptiveDpr pixelated />
           <Suspense fallback={null}>
             {/* Environment map for car reflections - warehouse gives good indoor reflections */}
-            <Environment preset="warehouse" background={false} environmentIntensity={0.5} />
+            <Environment preset="warehouse" background={false} environmentIntensity={envIntensity} />
             <GameLoop />
             <CameraController />
             <CarParkScene />
@@ -91,7 +108,7 @@ export default function GameCanvas() {
   const tier = usePerformanceTier()
 
   return (
-    <div className="w-full h-screen bg-black overflow-hidden touch-none">
+    <div className="fixed inset-0 w-screen h-dvh bg-black overflow-hidden touch-none">
       <GameProvider initialTier={tier}>
         <GameContent />
       </GameProvider>

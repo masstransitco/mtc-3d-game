@@ -57,19 +57,12 @@ function SteeringButton({ direction, onSteerChange }: SteeringButtonProps) {
   return (
     <button
       ref={buttonRef}
-      className={`
-        w-20 h-20 rounded-2xl
-        bg-white/10 active:bg-cyan-500/30
-        border border-white/20 active:border-cyan-400/50
-        flex items-center justify-center
-        touch-none select-none
-        transition-colors duration-75
-      `}
+      className="w-14 h-14 rounded-xl bg-white/10 active:bg-cyan-500/30 border border-white/20 active:border-cyan-400/50 flex items-center justify-center touch-none select-none transition-colors duration-75"
       onMouseDown={handleStart}
       onMouseUp={handleEnd}
       onMouseLeave={handleEnd}
     >
-      <Icon className="w-10 h-10 text-white/70" strokeWidth={3} />
+      <Icon className="w-7 h-7 text-white/70" strokeWidth={3} />
     </button>
   )
 }
@@ -83,14 +76,13 @@ export function SteeringControls() {
       activeDirectionRef.current = direction
       setMobileSteerInput(value)
     } else if (activeDirectionRef.current === direction) {
-      // Only reset if this direction was the active one
       activeDirectionRef.current = null
       setMobileSteerInput(0)
     }
   }, [setMobileSteerInput])
 
   return (
-    <div className="flex flex-col gap-3 bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/5">
+    <div className="flex flex-row gap-2 bg-black/40 backdrop-blur-sm rounded-xl p-2 border border-white/5">
       <SteeringButton
         direction="left"
         onSteerChange={(v) => handleSteerChange("left", v)}
