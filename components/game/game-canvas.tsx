@@ -63,10 +63,13 @@ function GameContent() {
         gl={glConfig}
         style={{
           background: "#0a0a0a",
-          width: "100%",
-          height: "100%",
+          width: "100vw",
+          height: "100vh",
           display: "block",
           touchAction: "none",
+          position: "absolute",
+          top: 0,
+          left: 0,
         }}
         frameloop="always"
         flat={performanceTier === "low"}
@@ -108,7 +111,19 @@ export default function GameCanvas() {
   const tier = usePerformanceTier()
 
   return (
-    <div className="fixed inset-0 w-screen h-dvh bg-black overflow-hidden touch-none">
+    <div
+      className="bg-black overflow-hidden touch-none"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        height: '100dvh',
+        margin: 0,
+        padding: 0,
+      }}
+    >
       <GameProvider initialTier={tier}>
         <GameContent />
       </GameProvider>
