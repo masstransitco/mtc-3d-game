@@ -10,108 +10,107 @@ export function StartScreen() {
   const [showSettings, setShowSettings] = useState(false)
 
   return (
-    <div className="fixed inset-0 z-20 flex flex-col items-center justify-center bg-black/80 backdrop-blur-md">
-      <div className="text-center max-w-md px-6">
-        {/* MTC Logo */}
-        <div className="mb-6">
-          <Image
-            src="/logos/mtc-logo-2025.svg"
-            alt="MTC Logo"
-            width={120}
-            height={40}
-            className="mx-auto"
-            priority
-          />
-        </div>
+    <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-auto">
+      {/* Landscape layout: side by side | Portrait layout: stacked */}
+      <div className="flex flex-col landscape:flex-row landscape:items-center landscape:gap-8 max-w-4xl w-full">
 
-        {/* Logo/Title */}
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">LION ROCK</h1>
-        <p className="text-cyan-400 font-mono text-lg mb-8">TUNNEL SPRINT</p>
-
-        {/* Game description */}
-        <p className="text-white/70 text-sm mb-8 leading-relaxed">
-          Race your MG4 through the 1430m Lion Rock Tunnel. Steer through gates
-          and avoid obstacles to set the fastest time!
-        </p>
-
-        {/* Controls info */}
-        <div className="bg-white/5 rounded-lg p-4 mb-8">
-          <h3 className="text-white/60 text-xs font-mono uppercase tracking-wider mb-3">Controls</h3>
-
-          {/* Desktop controls */}
-          <div className="mb-4">
-            <div className="text-cyan-400/80 text-xs font-mono mb-2">Desktop</div>
-            <div className="grid grid-cols-2 gap-1 text-sm">
-              <div className="text-white/50">Steer:</div>
-              <div className="text-white">A/D or ← →</div>
-              <div className="text-white/50">Brake:</div>
-              <div className="text-white">Space</div>
-            </div>
+        {/* Left side: Logo and title */}
+        <div className="text-center landscape:text-left landscape:flex-1 mb-4 landscape:mb-0">
+          {/* MTC Logo */}
+          <div className="mb-3 landscape:mb-4">
+            <Image
+              src="/logos/mtc-logo-2025.svg"
+              alt="MTC Logo"
+              width={100}
+              height={33}
+              className="mx-auto landscape:mx-0"
+              priority
+            />
           </div>
 
-          {/* Mobile controls */}
-          <div>
-            <div className="text-cyan-400/80 text-xs font-mono mb-2">Mobile (Landscape)</div>
-            <div className="grid grid-cols-2 gap-1 text-sm">
-              <div className="text-white/50">Steer:</div>
-              <div className="text-white">Left side buttons</div>
-              <div className="text-white/50">Throttle/Brake:</div>
-              <div className="text-white">Right side pedals</div>
-            </div>
-          </div>
+          {/* Title */}
+          <h1 className="text-3xl landscape:text-4xl font-bold text-white mb-1 tracking-tight">LION ROCK</h1>
+          <p className="text-cyan-400 font-mono text-base landscape:text-lg mb-3">TUNNEL SPRINT</p>
+
+          {/* Game description - hidden on very small landscape */}
+          <p className="text-white/70 text-sm leading-relaxed hidden landscape:block">
+            Race through the 1430m Lion Rock Tunnel. Steer through gates and avoid obstacles!
+          </p>
         </div>
 
-        {/* Start button */}
-        <Button
-          onClick={startCountdown}
-          className="w-full h-14 text-lg font-bold bg-cyan-500 hover:bg-cyan-400 text-black mb-4"
-        >
-          START RACE
-        </Button>
+        {/* Right side: Controls and button */}
+        <div className="landscape:flex-1 landscape:max-w-sm">
+          {/* Controls info - compact */}
+          <div className="bg-white/5 rounded-lg p-3 mb-4">
+            <h3 className="text-white/60 text-xs font-mono uppercase tracking-wider mb-2">Controls</h3>
 
-        {/* Settings toggle */}
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="text-white/50 hover:text-white text-sm underline underline-offset-4"
-        >
-          {showSettings ? "Hide Settings" : "Settings"}
-        </button>
+            <div className="flex gap-4 text-xs">
+              {/* Desktop */}
+              <div className="flex-1">
+                <div className="text-cyan-400/80 font-mono mb-1">Desktop</div>
+                <div className="text-white/70">A/D or ← → to steer</div>
+                <div className="text-white/70">Space to brake</div>
+              </div>
 
-        {/* Settings panel */}
-        {showSettings && (
-          <div className="mt-4 bg-white/5 rounded-lg p-4 text-left">
-            <div className="mb-4">
-              <label className="text-white/60 text-xs font-mono uppercase tracking-wider block mb-2">
-                Graphics Quality
-              </label>
-              <div className="flex gap-2">
-                {(["low", "medium", "high"] as const).map((tier) => (
-                  <button
-                    key={tier}
-                    onClick={() => setPerformanceTier(tier)}
-                    className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                      performanceTier === tier ? "bg-cyan-500 text-black" : "bg-white/10 text-white hover:bg-white/20"
-                    }`}
-                  >
-                    {tier.charAt(0).toUpperCase() + tier.slice(1)}
-                  </button>
-                ))}
+              {/* Mobile */}
+              <div className="flex-1">
+                <div className="text-cyan-400/80 font-mono mb-1">Mobile</div>
+                <div className="text-white/70">Left: Steer buttons</div>
+                <div className="text-white/70">Right: Pedals</div>
               </div>
             </div>
+          </div>
 
-            <div>
-              <label className="flex items-center gap-3 cursor-pointer">
+          {/* Start button */}
+          <Button
+            onClick={startCountdown}
+            className="w-full h-12 text-lg font-bold bg-cyan-500 hover:bg-cyan-400 text-black mb-3"
+          >
+            START RACE
+          </Button>
+
+          {/* Settings toggle */}
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="w-full text-white/50 hover:text-white text-sm underline underline-offset-4"
+          >
+            {showSettings ? "Hide Settings" : "Settings"}
+          </button>
+
+          {/* Settings panel */}
+          {showSettings && (
+            <div className="mt-3 bg-white/5 rounded-lg p-3 text-left">
+              <div className="mb-3">
+                <label className="text-white/60 text-xs font-mono uppercase tracking-wider block mb-2">
+                  Graphics
+                </label>
+                <div className="flex gap-2">
+                  {(["low", "medium", "high"] as const).map((tier) => (
+                    <button
+                      key={tier}
+                      onClick={() => setPerformanceTier(tier)}
+                      className={`flex-1 py-1.5 px-2 rounded text-xs font-medium transition-colors ${
+                        performanceTier === tier ? "bg-cyan-500 text-black" : "bg-white/10 text-white hover:bg-white/20"
+                      }`}
+                    >
+                      {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={reducedMotion}
                   onChange={(e) => setReducedMotion(e.target.checked)}
                   className="w-4 h-4 rounded border-white/30 bg-white/10 text-cyan-500 focus:ring-cyan-500"
                 />
-                <span className="text-white text-sm">Reduce Motion</span>
+                <span className="text-white text-xs">Reduce Motion</span>
               </label>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
