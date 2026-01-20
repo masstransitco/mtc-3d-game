@@ -6,6 +6,7 @@ type ControlState = {
   steerInput: number // -1 to 1
   isBraking: boolean
   setBraking: (value: boolean) => void
+  setSteerInput: (value: number) => void
 }
 
 // Use refs for smooth, jitter-free control updates
@@ -13,13 +14,19 @@ export function useCarControls(): ControlState {
   // Use refs instead of state to avoid re-renders on every input change
   const steerRef = useRef(0)
   const brakingRef = useRef(false)
-  const controlModeRef = useRef<"keyboard" | "touch" | "tilt">("keyboard")
+  const controlModeRef = useRef<"keyboard" | "touch" | "tilt" | "buttons">("keyboard")
   const keysPressed = useRef<Set<string>>(new Set())
   const touchStartX = useRef<number | null>(null)
 
   // Function to set braking from external sources (e.g., mobile brake button)
   const setBraking = useCallback((value: boolean) => {
     brakingRef.current = value
+  }, [])
+
+  // Function to set steering from external sources (e.g., mobile steering buttons)
+  const setSteerInput = useCallback((value: number) => {
+    controlModeRef.current = "buttons"
+    steerRef.current = Math.max(-1, Math.min(1, value))
   }, [])
 
   // Keyboard controls
@@ -164,5 +171,6 @@ export function useCarControls(): ControlState {
       return brakingRef.current
     },
     setBraking,
+    setSteerInput,
   }
 }

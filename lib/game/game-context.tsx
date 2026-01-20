@@ -47,9 +47,10 @@ type GameContextType = {
   // Event log for verification
   eventLog: GameEvent[]
 
-  // Controls - pedal positions (0-1)
+  // Controls - pedal positions (0-1) and steering (-1 to 1)
   throttlePosition: number
   brakePosition: number
+  mobileSteerInput: number
 
   // Actions
   startCountdown: () => void
@@ -62,6 +63,7 @@ type GameContextType = {
   updateSpeed: (speed: number) => void
   setThrottlePosition: (pos: number) => void
   setBrakePosition: (pos: number) => void
+  setMobileSteerInput: (value: number) => void
   addPassedGate: (gateId: string) => void
   addMissedGate: (gateId: string) => void
   addCollision: (obstacleId: string) => void
@@ -107,9 +109,10 @@ export function GameProvider({
   const [performanceTier, setPerformanceTier] = useState<PerformanceTier>(initialTier)
   const [reducedMotion, setReducedMotion] = useState(false)
 
-  // UI pedal controls (0-1 position values)
+  // UI pedal controls (0-1 position values) and mobile steering (-1 to 1)
   const throttlePositionRef = useRef(0)
   const brakePositionRef = useRef(0)
+  const mobileSteerInputRef = useRef(0)
 
   const eventLogRef = useRef<GameEvent[]>([])
 
@@ -148,6 +151,7 @@ export function GameProvider({
     carVelocityRef.current = { x: 0, y: 0, z: 0 }
     throttlePositionRef.current = 0
     brakePositionRef.current = 0
+    mobileSteerInputRef.current = 0
     setWasInterrupted(false)
     eventLogRef.current = []
   }, [])
@@ -198,6 +202,10 @@ export function GameProvider({
 
   const setBrakePosition = useCallback((pos: number) => {
     brakePositionRef.current = Math.max(0, Math.min(1, pos))
+  }, [])
+
+  const setMobileSteerInput = useCallback((value: number) => {
+    mobileSteerInputRef.current = Math.max(-1, Math.min(1, value))
   }, [])
 
   const addPassedGate = useCallback(
@@ -284,12 +292,15 @@ export function GameProvider({
     performanceTier,
     reducedMotion,
     eventLog: eventLogRef.current,
-    // Controls - pedal positions
+    // Controls - pedal positions and mobile steering
     get throttlePosition() {
       return throttlePositionRef.current
     },
     get brakePosition() {
       return brakePositionRef.current
+    },
+    get mobileSteerInput() {
+      return mobileSteerInputRef.current
     },
     startCountdown,
     startGame,
@@ -301,6 +312,7 @@ export function GameProvider({
     updateSpeed,
     setThrottlePosition,
     setBrakePosition,
+    setMobileSteerInput,
     addPassedGate,
     addMissedGate,
     addCollision,

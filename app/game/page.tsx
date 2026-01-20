@@ -1,6 +1,7 @@
 "use client"
 
 import dynamic from "next/dynamic"
+import { PortraitWarning } from "@/components/game/portrait-warning"
 
 // Dynamic import to prevent SSR issues with Three.js
 const GameCanvas = dynamic(() => import("@/components/game/game-canvas"), {
@@ -13,5 +14,10 @@ const GameCanvas = dynamic(() => import("@/components/game/game-canvas"), {
 })
 
 export default function GamePage() {
-  return <GameCanvas />
+  return (
+    <>
+      <PortraitWarning />
+      <GameCanvas />
+    </>
+  )
 }

@@ -23,7 +23,12 @@ export default function Home() {
         <p className="text-cyan-400 font-mono text-xl mb-4">MG4 SPRINT</p>
 
         {/* Tagline */}
-        <p className="text-white/60 text-lg mb-8">Race your MG4 through the neon-lit carparks of Hong Kong</p>
+        <p className="text-white/60 text-lg mb-6">Race your MG4 through the Lion Rock Tunnel</p>
+
+        {/* Quick instructions */}
+        <p className="text-white/40 text-sm mb-8">
+          Best played in landscape mode with two hands
+        </p>
 
         {/* Decorative element with MG4 silhouette hint */}
         <div className="relative w-full h-32 mb-8 overflow-hidden rounded-lg">

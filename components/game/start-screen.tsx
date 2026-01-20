@@ -30,20 +30,34 @@ export function StartScreen() {
 
         {/* Game description */}
         <p className="text-white/70 text-sm mb-8 leading-relaxed">
-          Race your MG4 through the 1430m Lion Rock Tunnel. Auto-accelerate, brake to control speed, steer through gates
-          and avoid obstacles for the fastest time!
+          Race your MG4 through the 1430m Lion Rock Tunnel. Steer through gates
+          and avoid obstacles to set the fastest time!
         </p>
 
         {/* Controls info */}
         <div className="bg-white/5 rounded-lg p-4 mb-8">
           <h3 className="text-white/60 text-xs font-mono uppercase tracking-wider mb-3">Controls</h3>
-          <div className="grid grid-cols-2 gap-2 text-sm">
-            <div className="text-white/50">Desktop:</div>
-            <div className="text-white">A/D or Arrow Keys</div>
-            <div className="text-white/50">Mobile:</div>
-            <div className="text-white">Tilt or Touch</div>
-            <div className="text-white/50">Brake:</div>
-            <div className="text-white">Space / Tap Button</div>
+
+          {/* Desktop controls */}
+          <div className="mb-4">
+            <div className="text-cyan-400/80 text-xs font-mono mb-2">Desktop</div>
+            <div className="grid grid-cols-2 gap-1 text-sm">
+              <div className="text-white/50">Steer:</div>
+              <div className="text-white">A/D or ← →</div>
+              <div className="text-white/50">Brake:</div>
+              <div className="text-white">Space</div>
+            </div>
+          </div>
+
+          {/* Mobile controls */}
+          <div>
+            <div className="text-cyan-400/80 text-xs font-mono mb-2">Mobile (Landscape)</div>
+            <div className="grid grid-cols-2 gap-1 text-sm">
+              <div className="text-white/50">Steer:</div>
+              <div className="text-white">Left side buttons</div>
+              <div className="text-white/50">Throttle/Brake:</div>
+              <div className="text-white">Right side pedals</div>
+            </div>
           </div>
         </div>
 

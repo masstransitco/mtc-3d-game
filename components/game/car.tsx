@@ -167,7 +167,7 @@ export function Car() {
   const DRAG_FACTOR = 0.0003  // Air resistance (equilibrium at ~95% max speed)
 
   const gameContext = useGame()
-  const { updateCarPosition, updateDistance, updateSpeed, gameState } = gameContext
+  const { updateCarPosition, updateDistance, updateSpeed, gameState, mobileSteerInput } = gameContext
   const controls = useCarControls()
 
   useFrame((state, delta) => {
@@ -215,8 +215,11 @@ export function Car() {
     const steerSpeed = 12
     const maxX = 10 // Boundaries within tunnel (slightly wider)
 
+    // Combine keyboard steering with mobile button steering (mobile takes priority if active)
+    const effectiveSteerInput = mobileSteerInput !== 0 ? mobileSteerInput : controls.steerInput
+
     // Apply steering with smoothing
-    let newX = positionRef.current.x + controls.steerInput * steerSpeed * clampedDelta
+    let newX = positionRef.current.x + effectiveSteerInput * steerSpeed * clampedDelta
     newX = Math.max(-maxX, Math.min(maxX, newX))
 
     // Update position ref
@@ -224,7 +227,7 @@ export function Car() {
     positionRef.current.z = newZ
 
     // Update velocity ref for collision detection
-    velocityRef.current.x = controls.steerInput * steerSpeed
+    velocityRef.current.x = effectiveSteerInput * steerSpeed
     velocityRef.current.z = -currentSpeed
 
     // Update car mesh position directly (no state)
@@ -232,7 +235,7 @@ export function Car() {
 
     // Car tilt based on steering - smooth with lerp
     if (bodyRef.current) {
-      const targetTilt = -controls.steerInput * 0.08
+      const targetTilt = -effectiveSteerInput * 0.08
       tiltRef.current = THREE.MathUtils.lerp(tiltRef.current, targetTilt, 0.15)
       bodyRef.current.rotation.z = tiltRef.current
     }

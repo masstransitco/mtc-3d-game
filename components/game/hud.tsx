@@ -3,6 +3,7 @@
 import { useGame, TRACK_LENGTH } from "@/lib/game/game-context"
 import { useState, useEffect } from "react"
 import { PedalControls } from "./pedal-controls"
+import { SteeringControls } from "./steering-controls"
 
 export function GameHUD() {
   const {
@@ -107,11 +108,19 @@ export function GameHUD() {
           ✕ Stop
         </button>
 
-        {/* Pedal Controls - Bottom right (touch devices only) */}
+        {/* Mobile Controls (touch devices only) */}
         {isTouchDevice && (
-          <div className="pointer-events-auto absolute bottom-8 right-4">
-            <PedalControls />
-          </div>
+          <>
+            {/* Steering Controls - Bottom left */}
+            <div className="pointer-events-auto absolute bottom-8 left-4">
+              <SteeringControls />
+            </div>
+
+            {/* Pedal Controls - Bottom right */}
+            <div className="pointer-events-auto absolute bottom-8 right-4">
+              <PedalControls />
+            </div>
+          </>
         )}
       </div>
     </div>
