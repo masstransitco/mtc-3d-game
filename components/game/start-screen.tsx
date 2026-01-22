@@ -4,9 +4,11 @@ import Image from "next/image"
 import { useGame } from "@/lib/game/game-context"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { useAudio } from "@/lib/audio"
 
 export function StartScreen() {
   const { startCountdown, setPerformanceTier, performanceTier, setReducedMotion, reducedMotion } = useGame()
+  const { initAudio, playClick, isMuted, setMuted, masterVolume, setMasterVolume } = useAudio()
   const [showSettings, setShowSettings] = useState(false)
 
   return (
@@ -63,7 +65,11 @@ export function StartScreen() {
 
           {/* Start button */}
           <Button
-            onClick={startCountdown}
+            onClick={async () => {
+              await initAudio()
+              playClick()
+              startCountdown()
+            }}
             className="w-full h-12 text-lg font-bold bg-cyan-500 hover:bg-cyan-400 text-black mb-3"
           >
             START RACE
@@ -108,6 +114,32 @@ export function StartScreen() {
                 />
                 <span className="text-white text-xs">Reduce Motion</span>
               </label>
+
+              {/* Sound settings */}
+              <div className="mt-3 pt-3 border-t border-white/10">
+                <label className="flex items-center gap-2 cursor-pointer mb-2">
+                  <input
+                    type="checkbox"
+                    checked={!isMuted}
+                    onChange={(e) => setMuted(!e.target.checked)}
+                    className="w-4 h-4 rounded border-white/30 bg-white/10 text-cyan-500 focus:ring-cyan-500"
+                  />
+                  <span className="text-white text-xs">Sound Effects</span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-white/60 text-xs">Volume</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={masterVolume}
+                    onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
+                    className="flex-1 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                    disabled={isMuted}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>

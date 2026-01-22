@@ -6,6 +6,7 @@ import { useFrame } from "@react-three/fiber"
 import { useGLTF } from "@react-three/drei"
 import { useGame } from "@/lib/game/game-context"
 import { useCarControls } from "@/lib/game/use-car-controls"
+import { useEngineSound } from "@/lib/audio"
 
 // Preload the MG4 model with Draco compression
 useGLTF.preload("/MG4-draco.glb")
@@ -169,6 +170,19 @@ export function Car() {
   const gameContext = useGame()
   const { updateCarPosition, updateDistance, updateSpeed, gameState, mobileSteerInput } = gameContext
   const controls = useCarControls()
+  const engineSound = useEngineSound()
+  const engineStartedRef = useRef(false)
+
+  // Start/stop engine based on game state
+  useEffect(() => {
+    if (gameState === "running" && !engineStartedRef.current) {
+      engineSound.start()
+      engineStartedRef.current = true
+    } else if (gameState !== "running" && engineStartedRef.current) {
+      engineSound.stop()
+      engineStartedRef.current = false
+    }
+  }, [gameState, engineSound])
 
   useFrame((state, delta) => {
     if (!carRef.current || gameState !== "running") return
@@ -250,6 +264,9 @@ export function Car() {
     )
     updateDistance(distance)
     updateSpeed(currentSpeed)
+
+    // Update engine sound based on current speed
+    engineSound.update(currentSpeed)
   })
 
   return (

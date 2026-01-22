@@ -1,11 +1,26 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useGame } from "@/lib/game/game-context"
+import { useAudio } from "@/lib/audio"
 
 export function CountdownOverlay() {
   const { startGame } = useGame()
+  const { playTick, playGo } = useAudio()
   const [count, setCount] = useState(3)
+  const lastPlayedRef = useRef<number | null>(null)
+
+  // Play sound when count changes
+  useEffect(() => {
+    if (lastPlayedRef.current === count) return
+    lastPlayedRef.current = count
+
+    if (count > 0) {
+      playTick()
+    } else if (count === 0) {
+      playGo()
+    }
+  }, [count, playTick, playGo])
 
   useEffect(() => {
     if (count === 0) {

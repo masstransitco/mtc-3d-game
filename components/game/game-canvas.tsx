@@ -3,6 +3,7 @@
 import { Canvas } from "@react-three/fiber"
 import { Suspense, useState, useEffect, useMemo } from "react"
 import { GameProvider, useGame } from "@/lib/game/game-context"
+import { AudioProvider } from "@/lib/audio"
 import { CarParkScene } from "./scenes/carpark-scene"
 import { Car } from "./car"
 import { TrackSystem } from "./track-system"
@@ -121,9 +122,11 @@ export default function GameCanvas() {
         padding: 0,
       }}
     >
-      <GameProvider initialTier={tier}>
-        <GameContent />
-      </GameProvider>
+      <AudioProvider>
+        <GameProvider initialTier={tier}>
+          <GameContent />
+        </GameProvider>
+      </AudioProvider>
     </div>
   )
 }

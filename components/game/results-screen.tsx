@@ -3,7 +3,8 @@
 import Image from "next/image"
 import { useGame, TRACK_LENGTH } from "@/lib/game/game-context"
 import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
+import { useAudio } from "@/lib/audio"
 
 export function ResultsScreen() {
   const {
@@ -20,9 +21,20 @@ export function ResultsScreen() {
     seed,
   } = useGame()
 
+  const { playCompletion } = useAudio()
+  const soundPlayedRef = useRef(false)
+
   // Calculate final score (no time bonus, just raw score from gates)
   const finalScore = score
   const completedTrack = distanceTraveled >= TRACK_LENGTH
+
+  // Play completion sound when results screen appears
+  useEffect(() => {
+    if (!soundPlayedRef.current) {
+      playCompletion()
+      soundPlayedRef.current = true
+    }
+  }, [playCompletion])
 
   // Format time as MM:SS.ms
   const formatTime = (seconds: number) => {

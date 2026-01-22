@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react"
+import { soundManager, SOUNDS } from "@/lib/audio"
 
 export type GameState = "ready" | "countdown" | "running" | "finished"
 export type PerformanceTier = "low" | "medium" | "high"
@@ -212,6 +213,9 @@ export function GameProvider({
     (gateId: string) => {
       setPassedGates((prev) => new Set([...prev, gateId]))
 
+      // Play gate pass sound
+      soundManager.play(SOUNDS.gates.pass, { volume: 0.7 })
+
       // Scoring: base points + combo
       const points = 10 * combo
       setScore((prev) => prev + points)
@@ -233,6 +237,9 @@ export function GameProvider({
     (gateId: string) => {
       setMissedGates((prev) => new Set([...prev, gateId]))
 
+      // Play gate miss sound
+      soundManager.play(SOUNDS.gates.miss, { volume: 0.6 })
+
       // Penalty
       setScore((prev) => Math.max(0, prev - 20))
 
@@ -250,6 +257,9 @@ export function GameProvider({
   const addCollision = useCallback(
     (obstacleId: string) => {
       setCollisions((prev) => new Set([...prev, obstacleId]))
+
+      // Play random collision sound
+      soundManager.playRandom(SOUNDS.collision, { volume: 0.7 })
 
       // Penalty
       setScore((prev) => Math.max(0, prev - 15))
