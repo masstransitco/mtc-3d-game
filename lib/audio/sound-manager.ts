@@ -117,7 +117,7 @@ class SoundManager {
     Object.values(SOUNDS.countdown).forEach(path => paths.push(path))
     Object.values(SOUNDS.gates).forEach(path => paths.push(path))
     SOUNDS.collision.forEach(path => paths.push(path))
-    Object.values(SOUNDS.engine).forEach(path => paths.push(path))
+    // Engine sounds are now synthesized, no files to preload
     paths.push(SOUNDS.completion)
 
     // Load all sounds in parallel
@@ -199,6 +199,10 @@ class SoundManager {
   // Get the audio context for direct manipulation
   getContext(): AudioContext | null {
     return this.audioContext
+  }
+
+  getMasterGain(): GainNode | null {
+    return this.masterGain
   }
 
   // Volume controls
