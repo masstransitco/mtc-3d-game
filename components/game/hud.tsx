@@ -83,7 +83,7 @@ export function GameHUD() {
           </span>
           <button
             onClick={stopGame}
-            className="pointer-events-auto text-white/60 hover:text-white text-xs font-mono ml-1"
+            className="pointer-events-auto text-white/60 active:text-white text-xs font-mono px-2 py-1 -my-1 min-w-[32px] min-h-[32px] flex items-center justify-center"
           >
             ✕
           </button>
