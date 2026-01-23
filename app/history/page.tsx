@@ -63,7 +63,7 @@ export default function HistoryPage() {
             <h1 className="text-2xl font-bold text-white">Run History</h1>
             <p className="text-white/50 text-sm">Your last {runs.length} MG4 runs</p>
           </div>
-          <Link href="/game">
+          <Link href="/">
             <Button className="bg-cyan-500 hover:bg-cyan-400 text-black">Play Now</Button>
           </Link>
         </div>
@@ -72,7 +72,7 @@ export default function HistoryPage() {
         {runs.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-white/50 mb-4">No runs yet</p>
-            <Link href="/game">
+            <Link href="/">
               <Button className="bg-cyan-500 hover:bg-cyan-400 text-black">Start Your First Race</Button>
             </Link>
           </div>

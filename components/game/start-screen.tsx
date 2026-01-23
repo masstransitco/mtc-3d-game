@@ -1,6 +1,7 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useGame } from "@/lib/game/game-context"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
@@ -75,13 +76,21 @@ export function StartScreen() {
             START RACE
           </Button>
 
-          {/* Settings toggle */}
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="w-full text-white/50 hover:text-white text-sm underline underline-offset-4"
-          >
-            {showSettings ? "Hide Settings" : "Settings"}
-          </button>
+          {/* Settings & History */}
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="text-white/50 hover:text-white text-sm underline underline-offset-4"
+            >
+              {showSettings ? "Hide Settings" : "Settings"}
+            </button>
+            <Link
+              href="/history"
+              className="text-white/50 hover:text-white text-sm underline underline-offset-4"
+            >
+              Run History
+            </Link>
+          </div>
 
           {/* Settings panel */}
           {showSettings && (
