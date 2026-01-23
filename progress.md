@@ -61,8 +61,7 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
   └── use-performance-tier.ts # Device detection & quality
 
 /app/
-  ├── page.tsx             # Home/menu
-  ├── game/page.tsx        # Game page
+  ├── page.tsx             # Game (root page)
   └── history/page.tsx     # Run history
 ```
 
@@ -124,8 +123,8 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 |-------|--------|
 | Swipe left/right | Steering |
 | Tilt device | Steering (gyroscope) |
-| Throttle slider | Proportional acceleration |
-| Brake slider | Proportional braking |
+| Brake slider (left) | Proportional braking |
+| Throttle slider (right) | Proportional acceleration |
 
 **Touch Implementation**:
 - Native event listeners with `{ passive: false }` for preventDefault
@@ -231,22 +230,19 @@ All frequencies and volumes scale with vehicle speed (0–180 km/h normalized).
 ### In-Game (Running)
 ```
 ┌─────────────────────────────────────────────────────┐
-│ [Score] │ [Speed km/h] │ [Time MM:SS] │ [Combo x1] │  ← Unified top bar
+│ [Score] │ [Speed km/h] │ [Time MM:SS] │ [Combo x1] │  ← Stats bar (0px top)
 ├─────────────────────────────────────────────────────┤
-│ [────────── Lion Rock Tunnel Progress ──────────]   │  ← Progress bar
-├─────────────────────────────────────────────────────┤
-│ [●gates] [●hits]                        [✕ Stop]   │  ← Stats & stop
+│ ●2 ●1 [━━━━━━━ progress bar ━━━━━━━] 420m  ✕      │  ← Progress + stats
 │                                                     │
-│                                                     │
-│                                    [Pedal Controls] │  ← Mobile only
+│ [Steer]                              [Stop] [Go]   │  ← Mobile controls
 └─────────────────────────────────────────────────────┘
 ```
 
 ### Screens
-- **Start Screen**: Logo, title, controls reference, settings
+- **Start Screen**: Logo, title, controls reference, settings, run history link
 - **Countdown**: 3-2-1-GO! with pulse animation
 - **Results**: Completion status, stats grid, share button
-- **History**: Past 20 runs with details
+- **History** (`/history`): Past 20 runs with details
 
 ---
 
@@ -278,6 +274,18 @@ interface GameRun {
 
 ## Recent Changes
 
+### App Structure (Jan 2026)
+- Game now loads directly at root `/` (removed separate `/game` route)
+- Start screen includes Settings and Run History links side by side
+- Removed old home/menu landing page
+
+### HUD Compact Redesign (Jan 2026)
+- Merged progress bar with gates/hits stats and stop button into single row
+- Both bars flush to top of viewport (0px, no padding)
+- Compact font sizes and spacing for minimal screen intrusion
+- Stop button has 32×32px min touch target
+- Pedal sliders swapped: Stop (left), Go (right)
+
 ### Layout & Orientation (Jan 2026)
 - Removed portrait warning overlay — game renders directly in any orientation
 - Game works in both portrait and landscape without forced rotation
@@ -295,12 +303,6 @@ interface GameRun {
 - Countdown sounds: tick for 3-2-1, go sound at race start
 - iOS/Safari audio unlock on first START RACE click
 - Settings UI: mute toggle and volume slider in start screen
-
-### HUD Improvements
-- Unified top bar with Score, Speed, Time, Combo (equally spaced)
-- `whitespace-nowrap` on speed to prevent km/h wrapping
-- Gates/hits stats and Stop button moved below progress bar (top-36)
-- Top corners of HUD bar are right-angle (rounded-b-lg only)
 
 ### Pedal Controls Fix
 - Replaced React synthetic touch events with native `addEventListener`
