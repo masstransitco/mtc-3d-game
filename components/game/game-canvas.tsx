@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import { Suspense, useState, useEffect, useMemo } from "react"
+import { Suspense, useState, useMemo } from "react"
 import { GameProvider, useGame } from "@/lib/game/game-context"
 import { AudioProvider } from "@/lib/audio"
 import { CarParkScene } from "./scenes/carpark-scene"
@@ -109,37 +109,9 @@ function GameContent() {
 
 export default function GameCanvas() {
   const tier = usePerformanceTier()
-  const [layout, setLayout] = useState<{ width: number; height: number; rotate: boolean } | null>(null)
-
-  useEffect(() => {
-    // Capture dimensions once on mount — never update
-    const w = window.innerWidth
-    const h = window.innerHeight
-    const portrait = h > w
-    setLayout({
-      width: portrait ? h : w,
-      height: portrait ? w : h,
-      rotate: portrait,
-    })
-  }, [])
-
-  if (!layout) return <div className="fixed inset-0 bg-black" />
 
   return (
-    <div
-      className="bg-black overflow-hidden touch-none"
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: layout.rotate ? layout.height : 0,
-        width: layout.width,
-        height: layout.height,
-        margin: 0,
-        padding: 0,
-        transform: layout.rotate ? 'rotate(90deg)' : undefined,
-        transformOrigin: 'top left',
-      }}
-    >
+    <div className="fixed inset-0 bg-black overflow-hidden touch-none">
       <AudioProvider>
         <GameProvider initialTier={tier}>
           <GameContent />
