@@ -109,17 +109,28 @@ function GameContent() {
 
 export default function GameCanvas() {
   const tier = usePerformanceTier()
+  const [isPortrait, setIsPortrait] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsPortrait(window.innerHeight > window.innerWidth)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   return (
     <div
       className="bg-black overflow-hidden touch-none"
       style={{
         position: 'fixed',
-        inset: 0,
-        width: '100%',
-        height: '100%',
+        top: 0,
+        left: isPortrait ? '100vw' : 0,
+        width: isPortrait ? '100vh' : '100vw',
+        height: isPortrait ? '100vw' : '100vh',
         margin: 0,
         padding: 0,
+        transform: isPortrait ? 'rotate(90deg)' : undefined,
+        transformOrigin: 'top left',
       }}
     >
       <AudioProvider>
