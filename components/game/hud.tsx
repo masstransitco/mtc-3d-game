@@ -35,78 +35,59 @@ export function GameHUD() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-10">
-      {/* Safe area wrapper for iPhone notch */}
-      <div className="absolute inset-0 p-4 pt-safe pb-safe pl-safe pr-safe">
-        {/* Top HUD bar - Score, Speed, Time, Combo in unified container */}
-        <div className="bg-black/60 backdrop-blur-sm rounded-b-lg flex divide-x divide-white/10">
-          {/* Score */}
-          <div className="flex-1 px-4 py-2 text-center">
-            <div className="text-white/60 text-xs font-mono uppercase tracking-wider">Score</div>
-            <div className="text-white text-xl font-mono font-bold tabular-nums">{score.toLocaleString()}</div>
+      <div className="absolute inset-0 pb-safe pl-safe pr-safe">
+        {/* Top HUD bar - Score, Speed, Time, Combo */}
+        <div className="bg-black/60 backdrop-blur-sm flex divide-x divide-white/10">
+          <div className="flex-1 px-3 py-1.5 text-center">
+            <div className="text-white/60 text-[10px] font-mono uppercase">Score</div>
+            <div className="text-white text-base font-mono font-bold tabular-nums">{score.toLocaleString()}</div>
           </div>
-
-          {/* Speed */}
-          <div className="flex-1 px-4 py-2 text-center">
-            <div className="text-white/60 text-xs font-mono uppercase tracking-wider">Speed</div>
-            <div className="text-xl font-mono font-bold tabular-nums text-white whitespace-nowrap">
-              {speedKmh} <span className="text-xs text-white/60">km/h</span>
+          <div className="flex-1 px-3 py-1.5 text-center">
+            <div className="text-white/60 text-[10px] font-mono uppercase">Speed</div>
+            <div className="text-base font-mono font-bold tabular-nums text-white whitespace-nowrap">
+              {speedKmh} <span className="text-[10px] text-white/60">km/h</span>
             </div>
           </div>
-
-          {/* Time */}
-          <div className="flex-1 px-4 py-2 text-center">
-            <div className="text-white/60 text-xs font-mono uppercase tracking-wider">Time</div>
-            <div className="text-xl font-mono font-bold tabular-nums text-white">
+          <div className="flex-1 px-3 py-1.5 text-center">
+            <div className="text-white/60 text-[10px] font-mono uppercase">Time</div>
+            <div className="text-base font-mono font-bold tabular-nums text-white">
               {minutes}:{seconds.toString().padStart(2, "0")}
             </div>
           </div>
-
-          {/* Combo */}
-          <div className="flex-1 px-4 py-2 text-center">
-            <div className="text-white/60 text-xs font-mono uppercase tracking-wider">Combo</div>
-            <div className={`text-xl font-mono font-bold tabular-nums ${combo > 1 ? "text-cyan-400" : "text-white"}`}>
+          <div className="flex-1 px-3 py-1.5 text-center">
+            <div className="text-white/60 text-[10px] font-mono uppercase">Combo</div>
+            <div className={`text-base font-mono font-bold tabular-nums ${combo > 1 ? "text-cyan-400" : "text-white"}`}>
               x{combo}
             </div>
           </div>
         </div>
 
-        {/* Distance Progress Bar */}
-        <div className="mt-3 bg-black/60 backdrop-blur-sm rounded-lg p-3">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-white/60 text-xs font-mono uppercase tracking-wider">Lion Rock Tunnel</span>
-            <span className="text-white font-mono text-sm tabular-nums">
-              {Math.floor(distanceTraveled)}m / {TRACK_LENGTH}m
-            </span>
+        {/* Progress bar + stats row */}
+        <div className="bg-black/60 backdrop-blur-sm flex items-center gap-2 px-3 py-1.5">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-cyan-400" />
+            <span className="text-white font-mono text-xs tabular-nums">{passedGates.size}</span>
           </div>
-          <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-red-400" />
+            <span className="text-white font-mono text-xs tabular-nums">{collisions.size}</span>
+          </div>
+          <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden mx-2">
             <div
               className="h-full bg-gradient-to-r from-cyan-400 to-green-400 transition-all duration-100"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
+          <span className="text-white/60 font-mono text-xs tabular-nums whitespace-nowrap">
+            {Math.floor(distanceTraveled)}m
+          </span>
+          <button
+            onClick={stopGame}
+            className="pointer-events-auto text-white/60 hover:text-white text-xs font-mono ml-1"
+          >
+            ✕
+          </button>
         </div>
-
-        {/* Gates/Hits stats - Top left (below progress bar) */}
-        <div className="absolute top-36 left-4 flex gap-2">
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5 flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-cyan-400" />
-            <span className="text-white font-mono text-sm tabular-nums">{passedGates.size}</span>
-            <span className="text-white/60 text-xs">gates</span>
-          </div>
-          <div className="bg-black/60 backdrop-blur-sm rounded-lg px-3 py-1.5 flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-400" />
-            <span className="text-white font-mono text-sm tabular-nums">{collisions.size}</span>
-            <span className="text-white/60 text-xs">hits</span>
-          </div>
-        </div>
-
-        {/* Stop Button - Below progress bar */}
-        <button
-          onClick={stopGame}
-          className="pointer-events-auto absolute top-36 right-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2 text-white/80 hover:text-white text-sm font-mono uppercase tracking-wider transition-colors"
-        >
-          ✕ Stop
-        </button>
 
         {/* Mobile Controls (touch devices only) */}
         {isTouchDevice && (
