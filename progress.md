@@ -69,9 +69,9 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 ### Audio System
 ```
 /lib/audio/
-  ├── constants.ts         # Sound paths, engine tier config, volumes
+  ├── constants.ts         # Sound paths, volumes config
   ├── sound-manager.ts     # Web Audio API singleton (buffers, playback)
-  ├── engine-controller.ts # 5-tier engine crossfade (speed-based)
+  ├── engine-controller.ts # Synthesized EV motor sound (oscillators)
   ├── audio-context.tsx    # React Context provider
   ├── use-audio.ts         # Hooks (useAudio, useEngineSound)
   └── index.ts             # Barrel exports
@@ -79,9 +79,7 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 /public/sounds/
   ├── ui/                  # click, gate_pass, miss, completion, combo
   ├── countdown/           # tick, go
-  ├── engine/              # idle, low, medium, high, max (loops)
-  ├── collision/           # impactMetal variants (random selection)
-  └── ambience/            # wind_loop (unused currently)
+  └── collision/           # impactMetal variants (random selection)
 ```
 
 ### State Management
@@ -146,27 +144,29 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 | START RACE click | start-screen.tsx | click_001.ogg + audio unlock |
 | Countdown 3,2,1 | countdown-overlay.tsx | tick_001.ogg |
 | GO! | countdown-overlay.tsx | go.ogg |
-| Engine running | car.tsx | 5-tier crossfade based on speed |
+| Engine running | car.tsx | Synthesized EV motor (oscillators) |
 | Gate pass | game-context.tsx | gate_pass.mp3 |
 | Gate miss | game-context.tsx | miss.ogg |
 | Collision | game-context.tsx | Random impactMetal_*.ogg |
 | Race finish | results-screen.tsx | completion.ogg |
 
-### Engine Sound Crossfade
+### EV Motor Sound Synthesis
 
-| Speed (km/h) | Sound | Behavior |
-|--------------|-------|----------|
-| 0-25 | engine_idle.ogg | Full at 0, fade out by 25 |
-| 10-55 | engine_low.ogg | Crossfade zone |
-| 45-95 | engine_medium.ogg | Crossfade zone |
-| 85-135 | engine_high.ogg | Crossfade zone |
-| 125+ | engine_max.ogg | Full above 160 |
+Uses 3 Web Audio API oscillators (no audio files):
+
+| Layer | Type | Frequency Range | Purpose |
+|-------|------|-----------------|---------|
+| Sub bass | Sine | 40–80 Hz | Motor vibration |
+| Motor hum | Sine | 80–400 Hz | Primary EV tone |
+| Whine | Sawtooth | 200–2000 Hz | Characteristic EV whine |
+
+All frequencies and volumes scale with vehicle speed (0–180 km/h normalized).
 
 ### Technical Details
 - **Web Audio API**: AudioContext with GainNode routing
 - **iOS unlock**: Silent buffer + context resume on first user tap
-- **Crossfade**: `exponentialRampToValueAtTime` (50ms) for click-free transitions
-- **Sound Manager**: Singleton pattern, preloads all buffers at init
+- **Smooth ramp**: `setTargetAtTime` (50ms time constant) for click-free transitions
+- **Sound Manager**: Singleton pattern, preloads effect buffers at init
 - **Settings**: Mute toggle + volume slider in start screen settings panel
 
 ---
@@ -278,9 +278,19 @@ interface GameRun {
 
 ## Recent Changes
 
+### Layout & Orientation (Jan 2026)
+- Removed portrait warning overlay — game renders directly in any orientation
+- Game works in both portrait and landscape without forced rotation
+- Simplified game container to fixed fullscreen div
+
+### EV Motor Sound (Jan 2026)
+- Replaced pre-recorded gas engine OGG files with synthesized oscillators
+- 3-layer sound: sub bass + motor hum + high-pitched whine
+- Frequencies and volumes scale smoothly with vehicle speed
+- Removed engine audio file dependencies
+
 ### Sound System (Jan 2026)
 - Added Web Audio API sound system with React Context integration
-- Engine sounds: 5-tier crossfade (idle→low→med→high→max) based on car speed
 - Event sounds: gate pass, gate miss, collision (random), completion
 - Countdown sounds: tick for 3-2-1, go sound at race start
 - iOS/Safari audio unlock on first START RACE click
