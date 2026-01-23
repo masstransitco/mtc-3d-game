@@ -25,9 +25,9 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 - Instanced rendering optimizations
 - Camera follow system
 - Pedal control UI (mobile)
+- Audio/sound effects (Web Audio API)
 
 ### Not Yet Implemented
-- Audio/sound effects
 - Particle effects (sparks, tire marks)
 - Leaderboards/cloud sync
 - Replay system
@@ -66,8 +66,27 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
   └── history/page.tsx     # Run history
 ```
 
+### Audio System
+```
+/lib/audio/
+  ├── constants.ts         # Sound paths, engine tier config, volumes
+  ├── sound-manager.ts     # Web Audio API singleton (buffers, playback)
+  ├── engine-controller.ts # 5-tier engine crossfade (speed-based)
+  ├── audio-context.tsx    # React Context provider
+  ├── use-audio.ts         # Hooks (useAudio, useEngineSound)
+  └── index.ts             # Barrel exports
+
+/public/sounds/
+  ├── ui/                  # click, gate_pass, miss, completion, combo
+  ├── countdown/           # tick, go
+  ├── engine/              # idle, low, medium, high, max (loops)
+  ├── collision/           # impactMetal variants (random selection)
+  └── ambience/            # wind_loop (unused currently)
+```
+
 ### State Management
 - **GameContext**: Single React Context for all game state
+- **AudioContext**: Separate React Context for audio (wraps GameProvider)
 - **State Machine**: `ready` → `countdown` → `running` → `finished`
 - **Refs for Physics**: Position/velocity use refs to avoid re-renders during game loop
 - **Event Logging**: Complete event history for verification
@@ -115,6 +134,40 @@ A 3D arcade racing game set in Hong Kong's Lion Rock Tunnel, featuring realistic
 - `stopPropagation()` on pedal controls to prevent steering interference
 - Spring-back animation on slider release (200ms ease-out)
 - iOS permission request for gyroscope
+
+---
+
+## Audio System
+
+### Integration Points
+
+| Event | Component | Sound |
+|-------|-----------|-------|
+| START RACE click | start-screen.tsx | click_001.ogg + audio unlock |
+| Countdown 3,2,1 | countdown-overlay.tsx | tick_001.ogg |
+| GO! | countdown-overlay.tsx | go.ogg |
+| Engine running | car.tsx | 5-tier crossfade based on speed |
+| Gate pass | game-context.tsx | gate_pass.mp3 |
+| Gate miss | game-context.tsx | miss.ogg |
+| Collision | game-context.tsx | Random impactMetal_*.ogg |
+| Race finish | results-screen.tsx | completion.ogg |
+
+### Engine Sound Crossfade
+
+| Speed (km/h) | Sound | Behavior |
+|--------------|-------|----------|
+| 0-25 | engine_idle.ogg | Full at 0, fade out by 25 |
+| 10-55 | engine_low.ogg | Crossfade zone |
+| 45-95 | engine_medium.ogg | Crossfade zone |
+| 85-135 | engine_high.ogg | Crossfade zone |
+| 125+ | engine_max.ogg | Full above 160 |
+
+### Technical Details
+- **Web Audio API**: AudioContext with GainNode routing
+- **iOS unlock**: Silent buffer + context resume on first user tap
+- **Crossfade**: `exponentialRampToValueAtTime` (50ms) for click-free transitions
+- **Sound Manager**: Singleton pattern, preloads all buffers at init
+- **Settings**: Mute toggle + volume slider in start screen settings panel
 
 ---
 
@@ -225,6 +278,14 @@ interface GameRun {
 
 ## Recent Changes
 
+### Sound System (Jan 2026)
+- Added Web Audio API sound system with React Context integration
+- Engine sounds: 5-tier crossfade (idle→low→med→high→max) based on car speed
+- Event sounds: gate pass, gate miss, collision (random), completion
+- Countdown sounds: tick for 3-2-1, go sound at race start
+- iOS/Safari audio unlock on first START RACE click
+- Settings UI: mute toggle and volume slider in start screen
+
 ### HUD Improvements
 - Unified top bar with Score, Speed, Time, Combo (equally spaced)
 - `whitespace-nowrap` on speed to prevent km/h wrapping
@@ -249,8 +310,8 @@ interface GameRun {
 - None currently tracked
 
 ### Enhancements
-- [ ] Add engine/tire sound effects
-- [ ] Add collision sound effects
+- [x] Add engine/tire sound effects
+- [x] Add collision sound effects
 - [ ] Particle effects for gate passes
 - [ ] Tire marks on hard braking
 - [ ] Cloud leaderboards
@@ -292,6 +353,9 @@ npm run start   # Production server
 | Pedal UI | `components/game/pedal-controls.tsx` |
 | Post-processing | `components/game/post-processing.tsx` |
 | Performance tier | `lib/game/use-performance-tier.ts` |
+| Audio manager | `lib/audio/sound-manager.ts` |
+| Engine sounds | `lib/audio/engine-controller.ts` |
+| Audio React hooks | `lib/audio/audio-context.tsx` |
 
 ---
 
