@@ -109,14 +109,21 @@ function GameContent() {
 
 export default function GameCanvas() {
   const tier = usePerformanceTier()
-  const [isPortrait, setIsPortrait] = useState(false)
+  const [layout, setLayout] = useState<{ width: number; height: number; rotate: boolean } | null>(null)
 
   useEffect(() => {
-    const check = () => setIsPortrait(window.innerHeight > window.innerWidth)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
+    // Capture dimensions once on mount — never update
+    const w = window.innerWidth
+    const h = window.innerHeight
+    const portrait = h > w
+    setLayout({
+      width: portrait ? h : w,
+      height: portrait ? w : h,
+      rotate: portrait,
+    })
   }, [])
+
+  if (!layout) return <div className="fixed inset-0 bg-black" />
 
   return (
     <div
@@ -124,12 +131,12 @@ export default function GameCanvas() {
       style={{
         position: 'fixed',
         top: 0,
-        left: isPortrait ? '100vw' : 0,
-        width: isPortrait ? '100vh' : '100vw',
-        height: isPortrait ? '100vw' : '100vh',
+        left: layout.rotate ? layout.height : 0,
+        width: layout.width,
+        height: layout.height,
         margin: 0,
         padding: 0,
-        transform: isPortrait ? 'rotate(90deg)' : undefined,
+        transform: layout.rotate ? 'rotate(90deg)' : undefined,
         transformOrigin: 'top left',
       }}
     >
