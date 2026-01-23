@@ -231,14 +231,14 @@ export function PedalControls() {
   return (
     <div className="flex gap-2 bg-black/40 backdrop-blur-sm rounded-xl p-2 border border-white/5">
       <PedalSlider
-        type="throttle"
-        position={localThrottle}
-        onPositionChange={handleThrottleChange}
-      />
-      <PedalSlider
         type="brake"
         position={localBrake}
         onPositionChange={handleBrakeChange}
+      />
+      <PedalSlider
+        type="throttle"
+        position={localThrottle}
+        onPositionChange={handleThrottleChange}
       />
     </div>
   )
